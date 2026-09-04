@@ -1,0 +1,3 @@
+## 2026-09-04 - High-Frequency Event Listeners (mineflayer)
+**Learning:** The mineflayer `time` event fires on every single in-game tick (20 times per second, or 20hz). Performing calculations like `Math.random()` on every tick for things that only happen every few seconds causes unnecessary CPU load and skews probability distributions if checked against a moving threshold.
+**Action:** When working with high-frequency game ticks, always cache threshold calculations outside the tick loop. Only recalculate random variables when the state transition actually occurs, not 20 times per second while waiting for it.
