@@ -10,6 +10,15 @@ var lastaction;
 var pi = 3.14159;
 var moveinterval = 2; // 2 second movement interval
 var maxrandom = 5; // 0-5 seconds added to movement interval (randomly)
+
+// ⚡ Bolt Performance Optimization:
+// Pre-calculate fixed tick values outside the event loop.
+// The time event fires 20 times per second, so avoiding
+// `moveinterval * 20` and `maxrandom * 20` multiplications
+// per tick reduces unnecessary CPU cycles without altering logic.
+var moveintervalTicks = moveinterval * 20;
+var maxrandomTicks = maxrandom * 20;
+
 var host = data["ip"];
 var username = data["name"]
 var bot = mineflayer.createBot({
@@ -30,8 +39,8 @@ bot.on('time', function() {
     if (lasttime<0) {
         lasttime = bot.time.age;
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
+        var randomadd = Math.random() * maxrandomTicks;
+        var interval = moveintervalTicks + randomadd;
         if (bot.time.age - lasttime > interval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
