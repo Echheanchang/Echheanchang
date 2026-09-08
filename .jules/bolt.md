@@ -1,0 +1,3 @@
+## 2024-05-18 - [Optimizing High-Frequency Game Loops]
+**Learning:** In Mineflayer, the `time` event fires 20 times per second (every game tick). Computations inside this event handler (like `Math.random()` or recalculating constant thresholds) can quickly accumulate overhead.
+**Action:** Always extract invariant calculations outside of high-frequency loops (like `bot.on('time')`) and use early returns to avoid executing unnecessary logic on every tick.
