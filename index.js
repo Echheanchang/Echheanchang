@@ -29,14 +29,16 @@ bot.on('time', function() {
     }
     if (lasttime<0) {
         lasttime = bot.time.age;
+        // Calculate the initial interval when lasttime is set
+        bot.currentInterval = moveinterval*20 + (Math.random() * maxrandom * 20);
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        if (bot.time.age - lasttime > bot.currentInterval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
                 lasttime = bot.time.age;
+                // Calculate next interval for standing still
+                bot.currentInterval = moveinterval*20 + (Math.random() * maxrandom * 20);
             } else {
                 var yaw = Math.random()*pi - (0.5*pi);
                 var pitch = Math.random()*pi - (0.5*pi);
@@ -45,6 +47,8 @@ bot.on('time', function() {
                 bot.setControlState(lastaction,true);
                 moving = 1;
                 lasttime = bot.time.age;
+                // Calculate next interval for moving
+                bot.currentInterval = moveinterval*20 + (Math.random() * maxrandom * 20);
                 bot.activateItem();
             }
         }
