@@ -1,0 +1,3 @@
+## 2024-05-24 - High-Frequency Event Loop Optimization
+**Learning:** The `bot.on('time')` event in Mineflayer fires 20 times per second (on every game tick). Doing random number generation (`Math.random()`) and arithmetic on every tick when the interval only changes periodically is a performance anti-pattern in this architecture, leading to unnecessary CPU overhead.
+**Action:** Always inspect the frequency of event loops (especially game ticks like `time`). Extract constant and state-change-dependent calculations out of the main loop. Compute target values only when the state updates, rather than continuously recalculating them against the current time.
