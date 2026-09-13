@@ -2,7 +2,7 @@ const mineflayer = require('mineflayer')
 const fs = require('fs');
 let rawdata = fs.readFileSync('config.json');
 let data = JSON.parse(rawdata);
-var lasttime = -1;
+var nextActionTime = -1;
 var moving = 0;
 var connected = 0;
 var actions = [ 'forward', 'back', 'left', 'right']
@@ -23,28 +23,39 @@ function getRandomArbitrary(min, max) {
 bot.on('login',function(){
 	console.log("Logged In")
 });
+
+// Helper to calculate next action time based on movement intervals
+function calculateNextActionTime(currentAge) {
+    var randomadd = Math.random() * maxrandom * 20;
+    var interval = moveinterval * 20 + randomadd;
+    return currentAge + interval;
+}
+
 bot.on('time', function() {
-    if (connected <1) {
+    if (connected < 1) {
         return;
     }
-    if (lasttime<0) {
-        lasttime = bot.time.age;
+    if (nextActionTime < 0) {
+        // Initialize next action time
+        nextActionTime = calculateNextActionTime(bot.time.age);
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        // ⚡ Bolt Optimization:
+        // By checking if the current age is greater than nextActionTime first,
+        // we avoid calculating `Math.random()` and `interval` 20 times per second
+        // when the bot is just waiting.
+        if (bot.time.age > nextActionTime) {
             if (moving == 1) {
-                bot.setControlState(lastaction,false);
+                bot.setControlState(lastaction, false);
                 moving = 0;
-                lasttime = bot.time.age;
+                nextActionTime = calculateNextActionTime(bot.time.age);
             } else {
-                var yaw = Math.random()*pi - (0.5*pi);
-                var pitch = Math.random()*pi - (0.5*pi);
-                bot.look(yaw,pitch,false);
+                var yaw = Math.random() * pi - (0.5 * pi);
+                var pitch = Math.random() * pi - (0.5 * pi);
+                bot.look(yaw, pitch, false);
                 lastaction = actions[Math.floor(Math.random() * actions.length)];
-                bot.setControlState(lastaction,true);
+                bot.setControlState(lastaction, true);
                 moving = 1;
-                lasttime = bot.time.age;
+                nextActionTime = calculateNextActionTime(bot.time.age);
                 bot.activateItem();
             }
         }
