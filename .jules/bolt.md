@@ -1,0 +1,3 @@
+## 2026-09-15 - Mineflayer Event Loop Optimization
+**Learning:** The `bot.on('time')` event fires 20 times per second. Calculating random values or doing expensive math inside this handler causes unnecessary high-frequency operations. Pre-calculating variables on state changes rather than re-evaluating them every tick saves processing power and surprisingly fixes statistical skews (as re-rolling random wait times 20 times a second severely skews wait times to the low end).
+**Action:** Always inspect the `bot.on('time')` block for redundant mathematical operations or object allocations, and move them to state-change blocks where possible.
