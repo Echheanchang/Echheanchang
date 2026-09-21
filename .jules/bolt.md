@@ -1,0 +1,3 @@
+## 2023-10-24 - Avoiding Expensive Operations in High-Frequency Event Loops
+**Learning:** In Mineflayer, the `bot.on('time')` event fires every single game tick (20 times per second). Performing recalculations like `Math.random()` and basic arithmetic repeatedly inside this loop, even when the bot is just waiting for an interval to elapse, creates unnecessary CPU overhead.
+**Action:** When working with high-frequency loops (like game ticks or render loops), calculate randomized or interval-based values once and cache them in a variable (e.g., `currentInterval`). Only recalculate these values when the state actually changes (e.g., when the interval elapses and an action occurs).
