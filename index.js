@@ -3,6 +3,7 @@ const fs = require('fs');
 let rawdata = fs.readFileSync('config.json');
 let data = JSON.parse(rawdata);
 var lasttime = -1;
+var currentInterval = 0;
 var moving = 0;
 var connected = 0;
 var actions = [ 'forward', 'back', 'left', 'right']
@@ -29,14 +30,15 @@ bot.on('time', function() {
     }
     if (lasttime<0) {
         lasttime = bot.time.age;
+        // Pre-calculate next interval to avoid doing this every tick (20 times per second)
+        currentInterval = moveinterval*20 + Math.random() * maxrandom * 20;
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        if (bot.time.age - lasttime > currentInterval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
                 lasttime = bot.time.age;
+                currentInterval = moveinterval*20 + Math.random() * maxrandom * 20;
             } else {
                 var yaw = Math.random()*pi - (0.5*pi);
                 var pitch = Math.random()*pi - (0.5*pi);
@@ -45,6 +47,7 @@ bot.on('time', function() {
                 bot.setControlState(lastaction,true);
                 moving = 1;
                 lasttime = bot.time.age;
+                currentInterval = moveinterval*20 + Math.random() * maxrandom * 20;
                 bot.activateItem();
             }
         }
