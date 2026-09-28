@@ -29,10 +29,10 @@ bot.on('time', function() {
     }
     if (lasttime<0) {
         lasttime = bot.time.age;
+        // Initialize interval calculation once per state transition
+        bot.currentInterval = moveinterval*20 + (Math.random() * maxrandom * 20);
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        if (bot.time.age - lasttime > bot.currentInterval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
@@ -47,6 +47,8 @@ bot.on('time', function() {
                 lasttime = bot.time.age;
                 bot.activateItem();
             }
+            // Recalculate interval for the next transition
+            bot.currentInterval = moveinterval*20 + (Math.random() * maxrandom * 20);
         }
     }
 });
