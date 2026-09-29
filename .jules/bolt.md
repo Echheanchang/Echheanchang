@@ -1,0 +1,3 @@
+## 2024-11-20 - [Mineflayer High-Frequency Loop Optimization]
+**Learning:** The `time` event in Mineflayer projects (`bot.on('time')`) executes 20 times per second. Heavy operations or random number generation calculated continuously in this loop drastically hurt performance without caching or state variables that recalculate exactly only when relevant internal bot state changes occur.
+**Action:** Always identify and target high-frequency hot path game loop events like `time` for micro-optimizations, moving static or conditionally updated intervals out to scope variables when writing performant Mineflayer bots.
