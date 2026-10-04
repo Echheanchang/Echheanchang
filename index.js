@@ -30,9 +30,13 @@ bot.on('time', function() {
     if (lasttime<0) {
         lasttime = bot.time.age;
     } else {
+        var timeElapsed = bot.time.age - lasttime;
+        // Early return: skip random calculation during the guaranteed minimum interval
+        if (timeElapsed <= moveinterval * 20) return;
+
         var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        var interval = moveinterval * 20 + randomadd;
+        if (timeElapsed > interval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
