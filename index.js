@@ -10,6 +10,8 @@ var lastaction;
 var pi = 3.14159;
 var moveinterval = 2; // 2 second movement interval
 var maxrandom = 5; // 0-5 seconds added to movement interval (randomly)
+// ⚡ Bolt: Pre-calculate interval to avoid wasteful 20Hz Math.random() calls
+var currentInterval = (moveinterval * 20) + (Math.random() * maxrandom * 20);
 var host = data["ip"];
 var username = data["name"]
 var bot = mineflayer.createBot({
@@ -30,9 +32,9 @@ bot.on('time', function() {
     if (lasttime<0) {
         lasttime = bot.time.age;
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        if (bot.time.age - lasttime > currentInterval) {
+            // ⚡ Bolt: Re-calculate interval only when state changes, not on every 20Hz tick
+            currentInterval = (moveinterval * 20) + (Math.random() * maxrandom * 20);
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
