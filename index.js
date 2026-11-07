@@ -20,6 +20,10 @@ function getRandomArbitrary(min, max) {
        return Math.random() * (max - min) + min;
 
 }
+
+// ⚡ Bolt: Initial interval
+var currentInterval = moveinterval * 20 + (Math.random() * maxrandom * 20);
+
 bot.on('login',function(){
 	console.log("Logged In")
 });
@@ -30,13 +34,13 @@ bot.on('time', function() {
     if (lasttime<0) {
         lasttime = bot.time.age;
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        // ⚡ Bolt: Avoid recalculating Math.random() 20x per second
+        if (bot.time.age - lasttime > currentInterval) {
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
                 lasttime = bot.time.age;
+                currentInterval = moveinterval * 20 + (Math.random() * maxrandom * 20);
             } else {
                 var yaw = Math.random()*pi - (0.5*pi);
                 var pitch = Math.random()*pi - (0.5*pi);
@@ -45,6 +49,7 @@ bot.on('time', function() {
                 bot.setControlState(lastaction,true);
                 moving = 1;
                 lasttime = bot.time.age;
+                currentInterval = moveinterval * 20 + (Math.random() * maxrandom * 20);
                 bot.activateItem();
             }
         }
@@ -54,4 +59,3 @@ bot.on('time', function() {
 bot.on('spawn',function() {
     connected=1;
 });
-
