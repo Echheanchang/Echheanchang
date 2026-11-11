@@ -20,6 +20,8 @@ function getRandomArbitrary(min, max) {
        return Math.random() * (max - min) + min;
 
 }
+var currentInterval = moveinterval * 20 + Math.random() * maxrandom * 20;
+
 bot.on('login',function(){
 	console.log("Logged In")
 });
@@ -30,9 +32,9 @@ bot.on('time', function() {
     if (lasttime<0) {
         lasttime = bot.time.age;
     } else {
-        var randomadd = Math.random() * maxrandom * 20;
-        var interval = moveinterval*20 + randomadd;
-        if (bot.time.age - lasttime > interval) {
+        if (bot.time.age - lasttime > currentInterval) {
+            // ⚡ Bolt: Recalculate interval only on state change to save 20Hz loop compute cycles
+            currentInterval = moveinterval * 20 + Math.random() * maxrandom * 20;
             if (moving == 1) {
                 bot.setControlState(lastaction,false);
                 moving = 0;
@@ -54,4 +56,3 @@ bot.on('time', function() {
 bot.on('spawn',function() {
     connected=1;
 });
-
