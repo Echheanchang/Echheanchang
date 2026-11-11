@@ -1,0 +1,3 @@
+## 2024-11-11 - Optimize Mineflayer 20Hz Loop State Check
+**Learning:** In high-frequency game loops (like Mineflayer's 20Hz 'time' event), pulling state-dependent calculations (like randomized interval thresholds) out of the loop and into state-change triggers is highly valued. It saves compute cycles and fixes subtle logical bugs (such as continuously re-rolling a target condition).
+**Action:** Avoid placing `Math.random()` or redundant threshold calculations inside the 20Hz `time` event loop. Instead, pre-calculate these values on state changes to prevent wasteful computation and maintain intended distribution behavior.
